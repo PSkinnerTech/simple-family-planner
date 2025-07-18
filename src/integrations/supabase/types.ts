@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      linked_accounts: {
+        Row: {
+          created_at: string
+          display_color: string
+          email: string
+          id: number
+          provider_refresh_token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_color?: string
+          email: string
+          id?: number
+          provider_refresh_token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_color?: string
+          email?: string
+          id?: number
+          provider_refresh_token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
