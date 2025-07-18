@@ -1,1 +1,7 @@
 project_id = "qkopgwfomvywivukdmei"
+
+[functions.refresh-google-token]
+verify_jwt = false
+
+[functions.fetch-calendar-events]
+verify_jwt = true

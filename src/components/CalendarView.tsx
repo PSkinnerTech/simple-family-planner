@@ -3,7 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useCalendarEvents } from '@/hooks/useCalendarEvents';
 
 // Placeholder function for updating events
 async function updateEventOnServer(eventInfo: any): Promise<{ title: string }> {
@@ -14,16 +14,7 @@ async function updateEventOnServer(eventInfo: any): Promise<{ title: string }> {
 }
 
 export function CalendarView() {
-  const [events] = useState([
-    // Sample events for testing
-    {
-      id: '1',
-      title: 'Sample Event',
-      start: new Date().toISOString().split('T')[0] + 'T10:00:00',
-      backgroundColor: '#3788D8',
-      borderColor: '#3788D8',
-    }
-  ]);
+  const { events, loading, error, refetch } = useCalendarEvents();
 
   const handleEventDrop = (dropInfo: any) => {
     const promise = updateEventOnServer(dropInfo.event);
@@ -40,12 +31,36 @@ export function CalendarView() {
     // Logic to open a modal for new event creation would go here
   };
 
+  if (error) {
+    return (
+      <div className="p-6 bg-background min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-foreground mb-6">Family Calendar</h1>
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+            <p className="text-destructive">Error loading calendar events: {error}</p>
+            <button 
+              onClick={refetch}
+              className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-background min-h-screen">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-foreground mb-6">Family Calendar</h1>
         
         <div className="bg-card rounded-lg shadow-sm border">
+          {loading && (
+            <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-10">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          )}
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
